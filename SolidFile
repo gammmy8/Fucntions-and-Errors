@@ -2,24 +2,27 @@
 pragma solidity ^0.8.0;
 
 contract SolidFile {
-    uint256 public count;
-    mapping(uint256 => bool) public uniqueValues;
+    uint256 public currentCount;
 
-    event CountIncremented(uint256 newCount);
+    mapping(uint256 => bool) private seenValues;
+
+    event CounterUpdated(uint256 newCount);
 
     constructor() {
-        count = 0;
+        currentCount = 0;
     }
 
-    function incrementCount(uint256 _value) external {
-        require(!uniqueValues[_value], "Value is not unique");
-        assert(_value > count);
-        uniqueValues[_value] = true;
-        count = _value;
-        emit CountIncremented(_value);
+    function updateCount(uint256 _newValue) external {
+        require(!seenValues[_newValue], "Value must be unique");
+        assert(_newValue > currentCount);
+        
+        seenValues[_newValue] = true;
+        currentCount = _newValue;
+        
+        emit CounterUpdated(_newValue);
     }
 
-    function revertTransaction() pure external {
-        revert("Transaction intentionally reverted");
+    function triggerRevert() pure external {
+        revert("Transaction has been intentionally reverted");
     }
 }
